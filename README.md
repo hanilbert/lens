@@ -40,6 +40,7 @@ Lens 对外提供常见 LLM API 路径：
 | ---------------------------- | ---------------------------------------------- |
 | OpenAI Chat Completions      | `/v1/chat/completions`                         |
 | OpenAI Responses             | `/v1/responses`                                |
+| OpenAI Embeddings            | `/v1/embeddings`                               |
 | Anthropic Messages           | `/v1/messages`                                 |
 | OpenAI Models                | `/v1/models`                                   |
 | Gemini generateContent       | `/v1beta/models/{model}:generateContent`       |
@@ -56,7 +57,7 @@ x-goog-api-key: <gateway-key>
 ### 上游站点与渠道管理
 
 - 一个站点可配置多个 Base URL、多个凭证、多个协议和模型列表
-- 支持按协议管理 OpenAI Chat、OpenAI Responses、Anthropic、Gemini 渠道
+- 支持按协议管理 OpenAI Chat、OpenAI Responses、OpenAI Embeddings、Anthropic、Gemini 渠道
 - 支持从上游发现模型，减少手动录入
 - 支持全局代理、CORS、站点名称和 Logo 等运行时配置
 
@@ -77,6 +78,8 @@ x-goog-api-key: <gateway-key>
 | ------------ | ------------------ | -------------------------------------------------------------------------- |
 | OpenAI Chat  | Anthropic Messages | `/v1/messages` 请求转换为 Chat Completions，上游响应再转回 Anthropic 格式  |
 | OpenAI Chat  | OpenAI Responses   | `/v1/responses` 请求转换为 Chat Completions，上游响应再转回 Responses 格式 |
+
+OpenAI Embeddings 仅支持同协议直连，不参与跨协议转换。
 
 ### 可观测性与成本
 
@@ -314,6 +317,7 @@ pnpm dev
 | OpenAI Chat        | `gpt-4o-mini`    | OpenAI Chat 上游模型                     |
 | Anthropic Messages | `claude-alias`   | Anthropic 上游模型，或 OpenAI Chat 上游模型 |
 | OpenAI Responses   | `responses-main` | OpenAI Responses 上游模型，或 OpenAI Chat 上游模型 |
+| OpenAI Embeddings  | `embedding-main` | OpenAI Embeddings 上游模型               |
 | Gemini             | `gemini-main`    | Gemini 上游模型                          |
 
 ### 4. 维护模型价格
@@ -366,6 +370,16 @@ completion = client.chat.completions.create(
     messages=[{"role": "user", "content": "hello"}],
 )
 print(completion.choices[0].message.content)
+```
+
+### OpenAI Embeddings
+
+```python
+embedding = client.embeddings.create(
+    model="your-embedding-group",
+    input="hello",
+)
+print(len(embedding.data[0].embedding))
 ```
 
 ### Anthropic Messages

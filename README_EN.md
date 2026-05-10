@@ -40,6 +40,7 @@ Lens exposes common LLM API routes:
 | ---------------------------- | ---------------------------------------------- |
 | OpenAI Chat Completions      | `/v1/chat/completions`                         |
 | OpenAI Responses             | `/v1/responses`                                |
+| OpenAI Embeddings            | `/v1/embeddings`                               |
 | Anthropic Messages           | `/v1/messages`                                 |
 | OpenAI Models                | `/v1/models`                                   |
 | Gemini generateContent       | `/v1beta/models/{model}:generateContent`       |
@@ -56,7 +57,7 @@ x-goog-api-key: <gateway-key>
 ### Upstream Site and Channel Management
 
 - Configure multiple Base URLs, credentials, protocols, and model lists per site
-- Manage OpenAI Chat, OpenAI Responses, Anthropic, and Gemini channels
+- Manage OpenAI Chat, OpenAI Responses, OpenAI Embeddings, Anthropic, and Gemini channels
 - Discover models from upstream providers
 - Configure global proxy, CORS, site name, and site logo at runtime
 
@@ -77,6 +78,8 @@ Same-protocol requests are passed through directly. Current cross-protocol conve
 | ------------------------- | ------------------ | ------------------------------------------------------------------------------- |
 | OpenAI Chat               | Anthropic Messages | Convert `/v1/messages` requests to Chat Completions and convert responses back  |
 | OpenAI Chat               | OpenAI Responses   | Convert `/v1/responses` requests to Chat Completions and convert responses back |
+
+OpenAI Embeddings only supports same-protocol passthrough and does not participate in cross-protocol conversion.
 
 ### Observability and Cost
 
@@ -314,6 +317,7 @@ Examples:
 | OpenAI Chat            | `gpt-4o-mini`    | OpenAI Chat upstream models                      |
 | Anthropic Messages     | `claude-alias`   | Anthropic upstream models, or OpenAI Chat upstream models |
 | OpenAI Responses       | `responses-main` | OpenAI Responses upstream models, or OpenAI Chat upstream models |
+| OpenAI Embeddings      | `embedding-main` | OpenAI Embeddings upstream models                |
 | Gemini                 | `gemini-main`    | Gemini upstream models                           |
 
 ### 4. Maintain model pricing
@@ -366,6 +370,16 @@ completion = client.chat.completions.create(
     messages=[{"role": "user", "content": "hello"}],
 )
 print(completion.choices[0].message.content)
+```
+
+### OpenAI Embeddings
+
+```python
+embedding = client.embeddings.create(
+    model="your-embedding-group",
+    input="hello",
+)
+print(len(embedding.data[0].embedding))
 ```
 
 ### Anthropic Messages
