@@ -38,3 +38,7 @@ include = ["lens_api*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "lens_api.__version__"}
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
